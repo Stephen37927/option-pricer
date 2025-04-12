@@ -96,6 +96,7 @@ class ArithmeticAsianOption(AsianOption):
         diffusion = self.volatility * np.sqrt(dt)
 
         # Simulate asset paths
+        np.random.seed(0)  # For reproducibility
         Z = np.random.normal(size=(self.num_paths, self.num_observations))
         S_paths = self.spot_price * np.exp(np.cumsum(drift + diffusion * Z, axis=1))
 
@@ -141,7 +142,17 @@ if __name__ == "__main__":
     sigma = 0.3   # Volatility
     N = 50        # Number of observations
 
-    option = ArithmeticAsianOption(
+    geo_option = GeometricAsianOption(
+        spot_price=S0,
+        risk_free_rate=r,
+        maturity=T,
+        strike_price=K,
+        volatility=sigma,
+        num_observations=N,
+        option_type='call'
+    )
+
+    ari_option = ArithmeticAsianOption(
         spot_price=S0,
         risk_free_rate=r,
         maturity=T,
@@ -153,6 +164,9 @@ if __name__ == "__main__":
         option_type='put'
     )
 
-    price, conf_interval = option.price()
-    print(f"Option Price: {price:.4f}")
+    price, conf_interval = ari_option.price()
+    print(f"Arithmetic Asian Option Price: {price:.4f}")
     print(f"95% Confidence Interval: {conf_interval}")
+
+    geo_price = geo_option.price()
+    print(f"Geometric Asian Option Price: {geo_price:.4f}")
