@@ -70,7 +70,6 @@ class BasePage(QWidget):
         self.setLayout(layout)
 
 
-
 # -------- 主页面 --------
 class MainWindow(QWidget):
     def __init__(self):
@@ -79,8 +78,8 @@ class MainWindow(QWidget):
         self.resize(500, 450)
 
         self.page_titles = [
-            "European option", "Geometric Asian", "Geometric Basket", "Arithmetic Asian",
-            "Arithmetic Basket", "KIKO", "American option", "Implied Volatility"
+            "European Option", "Implied Volatility", "Geometric Asian", "Arithmetic Asian", "Geometric Basket", 
+            "Arithmetic Basket", "KIKO Option", "American Option", 
         ]
         self.pages = {}
         self.initUI()
@@ -124,12 +123,12 @@ class MainWindow(QWidget):
         main_layout.addLayout(grid_layout)
         self.setLayout(main_layout)
 
-        self.pages["European option"] = EuropeanOptionPage(self.return_to_main)
-        self.pages["American option"] = AmericanOptionPage(self.return_to_main)
+        self.pages["European Option"] = EuropeanOptionPage(self.return_to_main)
+        self.pages["American Option"] = AmericanOptionPage(self.return_to_main)
         self.pages["Implied Volatility"] = ImpliedVolatilityPage(self.return_to_main)
         self.pages["Arithmetic Asian"] = ArithmeticAsianPage(self.return_to_main)
         self.pages["Geometric Asian"] = GeometricAsianPage(self.return_to_main)
-        self.pages["KIKO"] = KIKOPage(self.return_to_main)
+        self.pages["KIKO Option"] = KIKOPage(self.return_to_main)
         self.pages["Geometric Basket"] = GeometricBasketOptionPage(self.return_to_main)
         self.pages["Arithmetic Basket"] = ArithmeticBasketOptionPage(self.return_to_main)
 
@@ -274,7 +273,6 @@ class EuropeanOptionPage(QWidget):
         for edit in self.inputs.values():
             edit.clear()
         self.result_output.clear()
-
 
 
 #American
@@ -685,7 +683,8 @@ class ArithmeticAsianPage(QWidget):
             sigma = float(self.inputs["sigma"].text())
             option_type = self.option_type_box.currentText()
             cv_box = self.cv_box.currentText()
-            option_european = ArithmeticAsianOption(S0, r, T, K, sigma,No,Np,cv_box, option_type)
+            cv_box_bool = True if cv_box.lower() == "true" else False
+            option_european = ArithmeticAsianOption(S0, r, T, K, sigma,No,Np,cv_box_bool, option_type)
             price ,conf_interval= option_european.price()
             self.result_output.setText(f"{price:.4f}")
             self.std_output.setText(f"{conf_interval}") 
@@ -1030,15 +1029,26 @@ class GeometricBasketOptionPage(QWidget):
             "volatilities": "sigma",
             "correlation": "cor"
         }
-        hint_label = QLabel("💡 Use comma to separate multiple values in spot prices and volatilities(e.g. 100, 105)")
-        hint_label.setStyleSheet("color: gray; font-size: 13px;")
-        form_layout.addRow(hint_label)
+        
+
+        # hint_label = QLabel("💡 Use , to separate. e.g. 100, 105")
+        # hint_label.setAlignment(Qt.AlignCenter)
+        # hint_label.setStyleSheet("color: gray; font-size: 13px;")
+        # form_layout.addRow(hint_label)
+
         for label, key in fields.items():
-            edit = QLineEdit()
-            edit.setPlaceholderText(f"Enter {label}")
-            label_widget = QLabel(f"{label}:")
-            label_widget.setStyleSheet("font-weight: bold; font-size: 15px;")
-            form_layout.addRow(label_widget, edit)
+            if label == "spot prices" or label == "volatilities":
+                edit = QLineEdit()
+                edit.setPlaceholderText(f"e.g. num1, num2, num3...")
+                label_widget = QLabel(f"{label}:")
+                label_widget.setStyleSheet("font-weight: bold; font-size: 15px;")
+                form_layout.addRow(label_widget, edit)
+            else:
+                edit = QLineEdit()
+                edit.setPlaceholderText(f"Enter {label}")
+                label_widget = QLabel(f"{label}:")
+                label_widget.setStyleSheet("font-weight: bold; font-size: 15px;")
+                form_layout.addRow(label_widget, edit)
             self.inputs[key] = edit
 
         # Option type selector
@@ -1297,11 +1307,11 @@ class ArithmeticBasketOptionPage(QWidget):
         self.std_output.clear()
 
 
-# -------- 运行入口 --------
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+# # -------- 运行入口 --------
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
+#     window = MainWindow()
+#     window.show()
+#     sys.exit(app.exec_())
 
 
