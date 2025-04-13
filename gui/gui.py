@@ -1199,7 +1199,12 @@ class ArithmeticBasketOptionPage(QWidget):
         option_label = QLabel("Option Type:")
         option_label.setStyleSheet("font-weight: bold; font-size: 15px;")
         form_layout.addRow(option_label, self.option_type_box)
-       
+       # Control Variate selector
+        self.cv_box = QComboBox()
+        self.cv_box.addItems(["True", "False"])
+        cv_label = QLabel("Use Control Variate:")
+        cv_label.setStyleSheet("font-weight: bold; font-size: 15px;")
+        form_layout.addRow(cv_label, self.cv_box)
         layout.addLayout(form_layout)
 
         # 计算按钮
@@ -1291,9 +1296,12 @@ class ArithmeticBasketOptionPage(QWidget):
             sigma_2 = float(self.inputs["sigma_2"].text())
             num_p = int(self.inputs["N"].text())
             option_type = self.option_type_box.currentText()
+            cv_box = self.cv_box.currentText()
+            cv_box_bool = True if cv_box.lower() == "true" else False
+            control_variate = 'geometric' if cv_box_bool else 'none'
             S0=[S0_1,S0_2]
             sigma=[sigma_1,sigma_2]
-            option_european = ArithmeticBasketOption(S0, r, T, K, sigma,correlation, option_type,num_p)
+            option_european = ArithmeticBasketOption(S0, r, T, K, sigma,correlation, option_type,num_p,control_variate=control_variate)
             price ,conf_interval= option_european.price()
             self.result_output.setText(f"{price:.4f}")
             self.std_output.setText(f"{conf_interval}") 
@@ -1305,6 +1313,7 @@ class ArithmeticBasketOptionPage(QWidget):
             edit.clear()
         self.result_output.clear()
         self.std_output.clear()
+        
 
 
 # # -------- 运行入口 --------
