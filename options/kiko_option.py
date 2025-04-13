@@ -26,7 +26,7 @@ class KIKOOption(Option):
         self.num_observations = num_observations
         self.rebate = rebate
 
-    def price(self, num_paths=1000, seed=1000):
+    def price(self, num_paths=100000, seed=1000):
         """
         Calculate the price of the KIKO option using Monte Carlo simulation.
 

@@ -61,11 +61,11 @@ class EuropeanOption(Option):
     
 if __name__ == "__main__":
     # Example usage
-    S0 = 2     # Underlying asset price
-    K = 2      # Strike price
+    S0 = 100     # Underlying asset price
+    K = 100      # Strike price
     T = 3      # Time to maturity (years)
-    r = 0.03     # Risk-free rate
-    q = 0     # Repo rate
+    r = 0.05     # Risk-free rate
+    q = 0.2     # Repo rate
     sigma = 0.3  # Volatility
     option_type = 'call'  # Option type ('call' or 'put')
     option = EuropeanOption(S0, r, T, K, q, sigma, option_type)

@@ -159,7 +159,7 @@ if __name__ == "__main__":
         strike_price=K,
         volatility=sigma,
         num_observations=N,
-        num_paths=10000,
+        num_paths=100000,
         use_control_variate=False,
         option_type='put'
     )
