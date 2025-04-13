@@ -26,9 +26,21 @@ CHEN Zhan (3036411217)
 - PyQt5
 ```
 ### Graphical User Interface
+We are committed to providing users with a brief, efficient, and user-friendly graphical user interface (GUI).
+
 **HomePage**
+
+Upon launching the program, users will first enter the main interface. In this interface, users can select the desired Option or Implied Volatility calculator by clicking on the corresponding buttons, which will lead them to the respective subpages.
+
 ![alt text](screenshots/image-2.png)
-Usage: Users can click on the desired calculater to enter the corresponding calculator page.
+
+**SubPages**
+
+Each subpage corresponds to a specific calculator. Users are required to input relevant parameters as indicated by the prompt labels. Once the input is complete, clicking the green “Calculate Price/IV” button will yield the calculation result. To enhance the user experience, we have also designed two auxiliary functions: the orange “Clear Inputs” button allows users to clear all inputs with a single click for easier re-entry, while the “Back” button at the bottom of each subpage allows users to return to the main interface.
+
+**Note**
+
+When calculating the price of the Geometric Basket Option, the number of spot prices and volatilities entered must be at least two. Therefore, users must input an equal number of spot prices and volatilities, separated by commas (e.g. 100,105) in the respective input fields. If the input format is incorrect, the program will display an error message.
 
 
 ## Functionality Description
