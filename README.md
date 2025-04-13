@@ -84,8 +84,25 @@ The diagram above illustrates the class hierarchy within the `options` module.
 * Each class encapsulates the data and behavior relevant to a particular option type. For example, `KIKOOption` includes attributes for barriers and rebate, and methods for price calculation and delta calculation, specific to KIKO options.
 
 ## Test Results & Analysis
+Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price) = 100. Below are some test results for different options.
+### **Asian Option**
+**Geometric Asian Option**
+| σ (volatility) | K (strike price)| n (# observations) | Type | Price |
+|----------------|-----------------|--------------------|------|-------|
+| 0.3            | 100             | 50                 | Put  |  |
+| 0.3            | 100             | 100                | Put  |  |
+| 0.4            | 100             | 50                 | Put  |  |
+| 0.3            | 100             | 50                | Call |  |
+| 0.3            | 100             | 100                | Call |  |
+| 0.4            | 100             | 50                 | Call |  |
 
+**Arithmetic Asian Option**
+| σ (volatility) | K (strike price)| n (# observations) | Type | Use_CV | # Paths| Price |
+|----------------|-----------------|--------------------|------|--------|--------|-------|
+| 
 
 
 ## Extensions
 
+**Basket Option with more than 2 assets**
+For Basket Option, Geometric version can handle more than 2 assets, but Arithmetic version can only handle 2 assets here. 
