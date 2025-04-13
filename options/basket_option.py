@@ -1,3 +1,4 @@
+# from options.option import Option
 from option import Option
 import numpy as np
 from scipy.stats import norm
@@ -60,7 +61,10 @@ class GeometricBasketOption(BasketOption):
         sigma_G = np.sqrt(sigma_G_squared)
 
         # Drift of geometric basket
-        mu_G = r - 0.5 * sigma_G_squared
+        avg_var = np.mean(sigma**2)           # 各资产方差的平均
+        mu_G = r - 0.5 * avg_var + 0.5 * sigma_G_squared
+
+        # mu_G = r - 0.5 * sigma_G_squared
 
         # d1 and d2 for BS-like formula
         d1 = (np.log(G0 / K) + (mu_G + 0.5 * sigma_G_squared) * T) / (sigma_G * np.sqrt(T))
@@ -97,6 +101,72 @@ class ArithmeticBasketOption(GeometricBasketOption):
         self.num_paths = num_paths
         self.control_variate = control_variate
 
+    # def price(self):
+    #     """
+    #     Monte Carlo simulation for arithmetic basket option with optional control variate technique.
+        
+    #     :return: Estimated option price with 95% confidence interval (tuple)
+    #     """
+    #     S1, S2 = self.spot_prices
+    #     sigma1, sigma2 = self.volatilities
+    #     rho = self.correlation
+    #     T = self.maturity
+    #     K = self.strike_price
+    #     r = self.risk_free_rate
+    #     n = self.num_paths
+    #     option_type = self.option_type
+
+    #     np.random.seed(0)  # random seed🧪
+
+    #     # Generate correlated random variables
+    #     Z1 = np.random.randn(n)
+    #     Z2 = rho * Z1 + np.sqrt(1 - rho**2) * np.random.randn(n)
+
+    #     # Simulate the asset prices at maturity
+    #     S1_T = S1 * np.exp((r - 0.5 * sigma1**2) * T + sigma1 * np.sqrt(T) * Z1)
+    #     S2_T = S2 * np.exp((r - 0.5 * sigma2**2) * T + sigma2 * np.sqrt(T) * Z2)
+
+    #     # Arithmetic mean payoff
+    #     arithmetic_mean = (S1_T + S2_T) / 2
+    #     if option_type == 'call':
+    #         payoff_arith = np.maximum(arithmetic_mean - K, 0)
+    #     elif option_type == 'put':
+    #         payoff_arith = np.maximum(K - arithmetic_mean, 0)
+    #     else:
+    #         raise ValueError("option_type must be 'call' or 'put'")
+
+    #     if self.control_variate == 'geometric':
+    #         # Calculate the geometric mean payoff
+    #         geometric_mean = np.sqrt(S1_T * S2_T)
+    #         if option_type == 'call':
+    #             payoff_geom = np.maximum(geometric_mean - K, 0)
+    #         else:
+    #             payoff_geom = np.maximum(K - geometric_mean, 0)
+
+    #         # Geometric basket option price as control variate
+    #         geo_option = GeometricBasketOption(self.spot_prices, r, T, K, self.volatilities, rho, option_type)
+    #         geo_price_analytic = geo_option.price()
+
+    #         # Calculate the covariance between the payoffs
+    #         cov_matrix = np.cov(payoff_arith, payoff_geom)
+    #         b_hat = cov_matrix[0, 1] / cov_matrix[1, 1]
+
+    #         # Control variate adjustment
+    #         price_control = np.exp(-r * T) * (payoff_arith - b_hat * (payoff_geom - geo_price_analytic))
+
+    #         price_mean = np.mean(price_control)
+    #         std_dev = np.std(price_control, ddof=1)
+    #     else:
+    #         # No control variate adjustment
+    #         discounted_payoff = np.exp(-r * T) * payoff_arith
+    #         price_mean = np.mean(discounted_payoff)
+    #         std_dev = np.std(discounted_payoff, ddof=1)
+
+    #     # 95% confidence interval
+    #     conf_interval = (float(price_mean - 1.96 * std_dev / np.sqrt(n)),
+    #                      float(price_mean + 1.96 * std_dev / np.sqrt(n)))
+
+    #     return price_mean, conf_interval
     def price(self):
         """
         Monte Carlo simulation for arithmetic basket option with optional control variate technique.
@@ -112,17 +182,17 @@ class ArithmeticBasketOption(GeometricBasketOption):
         n = self.num_paths
         option_type = self.option_type
 
-        np.random.seed(0)  # random seed🧪
+        np.random.seed(0)  # 固定随机种子，便于结果复现
 
-        # Generate correlated random variables
+        # 生成相关标准正态随机变量
         Z1 = np.random.randn(n)
         Z2 = rho * Z1 + np.sqrt(1 - rho**2) * np.random.randn(n)
 
-        # Simulate the asset prices at maturity
+        # 模拟到期价格
         S1_T = S1 * np.exp((r - 0.5 * sigma1**2) * T + sigma1 * np.sqrt(T) * Z1)
         S2_T = S2 * np.exp((r - 0.5 * sigma2**2) * T + sigma2 * np.sqrt(T) * Z2)
 
-        # Arithmetic mean payoff
+        # 计算算术平均
         arithmetic_mean = (S1_T + S2_T) / 2
         if option_type == 'call':
             payoff_arith = np.maximum(arithmetic_mean - K, 0)
@@ -132,35 +202,39 @@ class ArithmeticBasketOption(GeometricBasketOption):
             raise ValueError("option_type must be 'call' or 'put'")
 
         if self.control_variate == 'geometric':
-            # Calculate the geometric mean payoff
+            # 计算几何平均
             geometric_mean = np.sqrt(S1_T * S2_T)
             if option_type == 'call':
                 payoff_geom = np.maximum(geometric_mean - K, 0)
             else:
                 payoff_geom = np.maximum(K - geometric_mean, 0)
 
-            # Geometric basket option price as control variate
+            # 计算几何篮子期权价格的解析解作为控制变量的已知值
             geo_option = GeometricBasketOption(self.spot_prices, r, T, K, self.volatilities, rho, option_type)
             geo_price_analytic = geo_option.price()
 
-            # Calculate the covariance between the payoffs
-            cov_matrix = np.cov(payoff_arith, payoff_geom)
+            # 计算折现后的 payoffs
+            X = np.exp(-r * T) * payoff_arith  # 算术部分
+            Y = np.exp(-r * T) * payoff_geom   # 几何部分
+
+            # 使用折现后的值计算控制变量系数
+            cov_matrix = np.cov(X, Y)
             b_hat = cov_matrix[0, 1] / cov_matrix[1, 1]
 
-            # Control variate adjustment
-            price_control = np.exp(-r * T) * (payoff_arith - b_hat * (payoff_geom - geo_price_analytic))
+            # 控制变量调整
+            price_control = X - b_hat * (Y - geo_price_analytic)
 
             price_mean = np.mean(price_control)
             std_dev = np.std(price_control, ddof=1)
         else:
-            # No control variate adjustment
+            # 若不使用控制变量
             discounted_payoff = np.exp(-r * T) * payoff_arith
             price_mean = np.mean(discounted_payoff)
             std_dev = np.std(discounted_payoff, ddof=1)
 
-        # 95% confidence interval
+        # 95% 置信区间
         conf_interval = (float(price_mean - 1.96 * std_dev / np.sqrt(n)),
-                         float(price_mean + 1.96 * std_dev / np.sqrt(n)))
+                        float(price_mean + 1.96 * std_dev / np.sqrt(n)))
 
         return price_mean, conf_interval
 
@@ -178,7 +252,9 @@ if __name__ == "__main__":
     geometric_option = GeometricBasketOption(spot_prices, risk_free_rate, maturity, strike_price, volatilities, correlation, option_type)
     print("Geometric Basket Option Price:", geometric_option.price())
 
-    arithmetic_option = ArithmeticBasketOption(spot_prices, risk_free_rate, maturity, strike_price, volatilities, correlation, num_paths=10000)
+    use_control_variate = True
+    control_variate = 'geometric' if use_control_variate else 'none'
+    arithmetic_option = ArithmeticBasketOption(spot_prices, risk_free_rate, maturity, strike_price, volatilities, correlation, option_type, num_paths=10000, control_variate=control_variate)
     price, conf_interval = arithmetic_option.price()
     print("Arithmetic Basket Option Price:", price)
     print("95% Confidence Interval:", conf_interval)
