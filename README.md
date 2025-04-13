@@ -1,23 +1,3 @@
-# COMP7405 Assignment3 report
-
-***Team Members:***
-
-LIN Xu (3036380236)
-
-CHEN Zhan (3036411217)
-
-## Contributions
-
-### LIN Xu
-
-- Implementation of all option pricers
-
-### CHEN Zhan
-
-- Implementation of GUI interface
-- Feed test cases to pricers and get results
-
-
 ## Interface Description
 ### Dependencies/Packages
 ```plaintext
@@ -25,6 +5,10 @@ CHEN Zhan (3036411217)
 - numpy
 - scipy
 - PyQt5
+```
+### Usage
+```bash
+python main.py
 ```
 ### Graphical User Interface
 We are committed to providing users with a brief, efficient, and user-friendly graphical user interface (GUI). Screenshots are provided in the [Appendix](#appendix-screenshots).
@@ -97,7 +81,7 @@ The diagram above illustrates the class hierarchy within the `options` module.
 ## Test Results & Analysis
 Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price) = 100. Below are some test results for different options.
 
-#### **European Option**
+### **European Option**
 **Tests**
 | σ (volatility) | K (strike price)| q (repo rate) | Type | Price |
 |----------------|-----------------|----------------|------|-------|
@@ -109,6 +93,7 @@ Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price
 | 0.3            | 110             | 0.20           | Call | 2.7767 |
 | 0.4            | 100             | 0.20           | Call | 7.1639 |
 | 0.3            | 100             | 0.10           | Call | 11.0827 |
+
 **Analysis**
 `Volatility (σ)`: Higher volatility increases option prices for both calls and puts, as it raises the likelihood of extreme price movements, enhancing the option's value.
 `Strike Price (K)`: For calls, a higher strike price decreases the option price, while for puts, it increases the price, as it affects the intrinsic value.
@@ -117,7 +102,7 @@ Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price
 `Risk-Free Rate (r)`: A higher risk-free rate increases call option prices and decreases put option prices, as it impacts the present value of the strike price.
 `Spot Price (S0)`: Higher spot prices increase call option prices and decrease put option prices, as it directly affects the intrinsic value.
 
-#### **Implied Volatility**
+### **Implied Volatility**
 **Tests**
 | K (strike price)| q (repo rate) | Type | Premium | IV |
 |-----------------|---------------|------|---------|----|
@@ -129,6 +114,7 @@ Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price
 | 100             | 0.10          | Call | 5       | 0.1792 |
 | 100             | 0.20          | Put  | 10      | X |
 | 100             | 0.20          | Call | 10      | 0.4766 |
+
 **Analysis**
 `Strike Price (K)`: Implied volatility often exhibits a "smile" or "skew" pattern, where options with strike prices far from the current spot price (deep in-the-money or out-of-the-money) tend to have higher implied volatilities.
 
@@ -140,7 +126,8 @@ Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price
 
 
 ### **Asian Option**
-**Geometric Asian Option (closed-form formula)**
+#### **Geometric Asian Option (closed-form formula)**
+**Tests**
 | σ (volatility) | K (strike price)| n (# observations) | Type | Price |
 |----------------|-----------------|--------------------|------|-------|
 | 0.3            | 100             | 50                 | Put  | 8.4827 |
@@ -150,7 +137,19 @@ Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price
 | 0.3            | 100             | 100                | Call | 13.1388 |
 | 0.4            | 100             | 50                 | Call | 15.7598 |
 
-**Arithmetic Asian Option (with MC method with control variate)**
+**Analysis**
+`Volatility (σ)`: Higher volatility increases the option price for both calls and puts, as it raises the likelihood of extreme price movements, enhancing the option's value.
+
+`Strike Price (K)`:
+
+- For calls, a higher strike price decreases the option price, as it reduces the intrinsic value.
+- For puts, a higher strike price increases the option price, as it raises the potential payoff.
+`Number of Observations (n)`: Increasing the number of observations slightly reduces the option price, as averaging over more points smooths out extreme price movements, reducing the option's value.
+
+`Option Type`: Call options are generally more expensive than put options for the same parameters when the spot price is higher than the strike price, due to the intrinsic value difference.
+
+#### **Arithmetic Asian Option (with MC method with control variate)**
+**Tests**
 | σ (volatility) | K (strike price)| n (# observations) | Type | Use_CV | # Paths| Price | CI |
 |----------------|-----------------|--------------------|------|--------|--------|-------|----|
 | 0.3            | 100             | 50                 | Put  | False  | 100000 | 7.7910 | (7.722078287068324, 7.859964997614279)  |
@@ -166,8 +165,22 @@ Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price
 | 0.4            | 100             | 50                 | Call | False  | 100000 | 18.1572 | (17.956540777657548, 18.357873729230892)  |
 | 0.4            | 100             | 50                 | Call | True   | 100000 | 18.2142 | (18.193897295219447, 18.234411652013694)  |
 
+**Analysis**
+`Volatility (σ)`: Higher volatility increases the option price for both calls and puts, as it raises the likelihood of extreme price movements, enhancing the option's value.
+
+`Strike Price (K)`:
+
+- For calls, a higher strike price decreases the option price, as it reduces the intrinsic value.
+- For puts, a higher strike price increases the option price, as it raises the potential payoff.
+`Number of Observations (n)`: Increasing the number of observations slightly reduces the option price, as averaging over more points smooths out extreme price movements, reducing the option's value.
+
+`Use of Control Variate (Use_CV)`: Using control variates improves the accuracy of Monte Carlo simulations, leading to more stable and slightly adjusted option prices.
+
+`Number of Paths (# Paths)`: A higher number of simulation paths reduces the confidence interval width, improving the precision of the estimated price.
+
 ### **Basket Option**
-**Geometric Basket Option (closed-form formula)**
+#### **Geometric Basket Option (closed-form formula)**
+**Tests**
 | S1   | S2   | σ1   | σ2   | K    | ρ(correlation) | Type | Price   |
 | ---- | ---- | ---- | ---- | ---- | -------------- | ---- | ------- |
 | 100  | 100  | 0.3  | 0.3  | 100  | 0.5            | Put  | 11.4916 |
@@ -183,7 +196,21 @@ Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price
 | 100  | 100  | 0.3  | 0.3  | 120  | 0.5            | Call | 14.6855 |
 | 100  | 100  | 0.5  | 0.5  | 100  | 0.5            | Call | 28.4494 |
 
-**Arithmetic Basket Option (Monte Carlo simulation with/without control variate)**
+**Analysis**
+`Spot Prices (S1, S2)`: Higher spot prices generally increase the price of call options and decrease the price of put options, as they directly affect the intrinsic value of the option.
+
+`Volatilities (σ1, σ2)`: Higher volatilities increase the option price for both calls and puts, as they raise the likelihood of extreme price movements, enhancing the option's value.
+
+`Strike Price (K)`:
+
+- For calls, a higher strike price decreases the option price, as it reduces the intrinsic value.
+- For puts, a higher strike price increases the option price, as it raises the potential payoff.
+`Correlation (ρ)`: Higher correlation between assets increases the price of call options and decreases the price of put options, as it reduces diversification effects and increases the overall basket volatility.
+
+`Option Type`: Call options are generally more expensive than put options for the same parameters when the spot prices are higher than the strike price, due to the intrinsic value difference.
+
+#### **Arithmetic Basket Option (Monte Carlo simulation with/without control variate)**
+**Tests**
 | S1 | S2 | σ1 | σ2 | K | ρ(correlation) | Type | Use_CV | # Paths| Price | CI |
 |----|----|----|----|---|----------------|------|--------|--------|-------|----|
 |100 |100 |0.3 |0.3 |100| 0.5            | Put  | False  | 100000 |  10.4947     | (10.400587253254375, 10.58891027105442)   |
@@ -213,15 +240,59 @@ Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price
 |100 |100 |0.3 |0.3 |100| 0.5            | Put  | False  | 1000000|  24.5295     | (24.453128632570863, 24.605970896525665)   |
 |100 |100 |0.3 |0.3 |100| 0.5            | Put  | True   | 1000000|  24.4954     | (24.48556162703866, 24.50523515961164)   |
 
+**Analysis**
+`Spot Prices (S1, S2)`: Higher spot prices generally increase the price of call options and decrease the price of put options, as they directly affect the intrinsic value of the option.
+
+`Volatilities (σ1, σ2)`: Higher volatilities increase the option price for both calls and puts, as they raise the likelihood of extreme price movements, enhancing the option's value.
+
+`Strike Price (K):`
+
+- For calls, a higher strike price decreases the option price, as it reduces the intrinsic value.
+- For puts, a higher strike price increases the option price, as it raises the potential payoff.
+`Correlation (ρ)`: Higher correlation between assets increases the price of call options and decreases the price of put options, as it reduces diversification effects and increases the overall basket volatility.
+
+`Use of Control Variate (Use_CV)`: Using control variates improves the accuracy of Monte Carlo simulations, leading to more stable and slightly adjusted option prices.
+
+`Number of Paths (# Paths)`: A higher number of simulation paths reduces the confidence interval width, improving the precision of the estimated price.
+
 ### **KIKO Option**
+**Tests**
 | σ    | T    | L(Lower Bound) | U(Upper Bound) | N (# Observations) | R (rebate) | Price  | Delta   | CI             |
 | ---- | ---- | -------------- | -------------- | ------------------ | ---------- | ------ | ------- | -------------- |
 | 0.20 | 2.0  | 80             | 125            | 24                 | 1.5        | 6.0092 | -0.0931 | 5.9454, 6.0731 |
 | 0.20 | 2.0  | 80             | 125            | 48                 | 1.5        | 6.0990 | -0.1793 | 6.0353, 6.1628 |
 | 0.20 | 2.0  | 80             | 125            | 24                 | 2.0        | 6.2190 | -0.0677 | 6.1557, 6.2823 |
 
+**Analysis**
+`Volatility (σ)`: Higher volatility increases the option price as it raises the likelihood of the underlying asset hitting the barriers, enhancing the option's value.
+
+`Time to Maturity (T)`: Longer maturity generally increases the option price, as it provides more time for the underlying asset to hit the barriers.
+
+`Lower and Upper Barriers (L, U)`:
+
+- A lower lower barrier (L) increases the likelihood of a knock-in event, raising the option price.
+- A higher upper barrier (U) decreases the likelihood of a knock-out event, also raising the option price.
+`Number of Observations (N)`: More frequent observations slightly increase the option price, as the barriers are checked more often, increasing the chance of hitting them.
+
+`Rebate (R)`: A higher rebate increases the option price, as it provides additional value in the event of a knock-out.
+
 ### **American Option**
-| 
+**Tests**
+| S | σ (volatility) | rate | T | K | Option | Steps | Price |
+|---|----------------|------|---|---|--------|-------|-------|
+|50 | 0.4            | 0.1  | 2 |40 |  Put   | 200   |2.9462 |
+|50 | 0.4            | 0.1  | 2 |50 |  Put   | 200   |6.1882 |
+|50 | 0.4            | 0.1  | 2 |70 |  Put   | 200   |15.9395 
+
+**Analysis**
+`Spot Price (S)`: Higher spot prices generally decrease the price of put options, as they reduce the intrinsic value of the option.
+`Volatility (σ)`: Higher volatility increases the option price for both calls and puts, as it raises the likelihood of extreme price movements, enhancing the option's value.
+`Risk-Free Rate (rate)`: A higher risk-free rate generally increases the price of call options and decreases the price of put options, as it affects the present value of the strike price.
+`Time to Maturity (T)`: Longer maturity generally increases option prices due to higher time value, allowing more time for favorable price movements.
+`Strike Price (K)`:
+- For puts, a higher strike price increases the option price, as it raises the potential payoff.
+`Steps`: More steps in the binomial tree generally lead to more accurate option prices, as they provide a finer resolution of the underlying asset's price movements.
+
 
 ## Extensions
 
