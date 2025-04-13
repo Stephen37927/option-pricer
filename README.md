@@ -15,6 +15,7 @@ CHEN Zhan (3036411217)
 ### CHEN Zhan
 
 - Implementation of GUI interface
+- Feed test cases to pricers and get results
 
 
 ## Interface Description
@@ -26,13 +27,11 @@ CHEN Zhan (3036411217)
 - PyQt5
 ```
 ### Graphical User Interface
-We are committed to providing users with a brief, efficient, and user-friendly graphical user interface (GUI).
+We are committed to providing users with a brief, efficient, and user-friendly graphical user interface (GUI). Screenshots are provided in the [Appendix](#appendix-screenshots).
 
 **HomePage**
 
 Upon launching the program, users will first enter the main interface. In this interface, users can select the desired Option or Implied Volatility calculator by clicking on the corresponding buttons, which will lead them to the respective subpages.
-
-![alt text](screenshots/image-2.png)
 
 **SubPages**
 
@@ -83,7 +82,7 @@ AsianOption <|-- GeometricAsianOption
 AsianOption <|-- ArithmeticAsianOption
 BasketOption <|-- GeometricBasketOption
 BasketOption <|-- ArithmeticBasketOption
-```   
+```
 
 The diagram above illustrates the class hierarchy within the `options` module.  
 
@@ -98,61 +97,163 @@ The diagram above illustrates the class hierarchy within the `options` module.
 ## Test Results & Analysis
 Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price) = 100. Below are some test results for different options.
 
-### **European Option**
+#### **European Option**
+**Tests**
 | σ (volatility) | K (strike price)| q (repo rate) | Type | Price |
 |----------------|-----------------|----------------|------|-------|
-| 0.3            | 100             | 0.20           | Put  |  |
-| 0.3            | 110             | 0.20           | Put  |  |
-| 0.4            | 100             | 0.20           | Put  |  |
-| 0.3            | 100             | 0.10           | Put  |  |
-| 0.3            | 100             | 0.20           | Call |  |
-| 0.3            | 110             | 0.20           | Call |  |
-| 0.4            | 100             | 0.20           | Call |  |
-| 0.3            | 100             | 0.10           | Call |  |
+| 0.3            | 100             | 0.20           | Put  | 34.9281 |
+| 0.3            | 110             | 0.20           | Put  | 42.5734 |
+| 0.4            | 100             | 0.20           | Put  | 38.3535 |
+| 0.3            | 100             | 0.10           | Put  | 23.0717 |
+| 0.3            | 100             | 0.20           | Call | 3.7385 |
+| 0.3            | 110             | 0.20           | Call | 2.7767 |
+| 0.4            | 100             | 0.20           | Call | 7.1639 |
+| 0.3            | 100             | 0.10           | Call | 11.0827 |
+**Analysis**
+`Volatility (σ)`: Higher volatility increases option prices for both calls and puts, as it raises the likelihood of extreme price movements, enhancing the option's value.
+`Strike Price (K)`: For calls, a higher strike price decreases the option price, while for puts, it increases the price, as it affects the intrinsic value.
+`Repo Rate (q)`: A higher repo rate reduces call option prices and increases put option prices, as it lowers the expected future price of the underlying asset.
+`Time to Maturity (T)`: Longer maturity generally increases option prices due to higher time value, allowing more time for favorable price movements.
+`Risk-Free Rate (r)`: A higher risk-free rate increases call option prices and decreases put option prices, as it impacts the present value of the strike price.
+`Spot Price (S0)`: Higher spot prices increase call option prices and decrease put option prices, as it directly affects the intrinsic value.
 
-**Implied Volatility**
+#### **Implied Volatility**
+**Tests**
 | K (strike price)| q (repo rate) | Type | Premium | IV |
 |-----------------|---------------|------|---------|----|
-| 100             | 0.20          | Put  | 5       |  |
-| 100             | 0.20          | Call | 5       |  |
-| 110             | 0.20          | Put  | 5       |  |
-| 110             | 0.20          | Call | 5       |  |
-| 100             | 0.10          | Put  | 5       |  |
-| 100             | 0.10          | Call | 5       |  |
-| 100             | 0.20          | Put  | 10      |  |
-| 100             | 0.20          | Call | 10      |  |
+| 100             | 0.20          | Put  | 5       | X |
+| 100             | 0.20          | Call | 5       | 0.3385 |
+| 110             | 0.20          | Put  | 5       | X |
+| 110             | 0.20          | Call | 5       | 0.3725 |
+| 100             | 0.10          | Put  | 5       | X |
+| 100             | 0.10          | Call | 5       | 0.1792 |
+| 100             | 0.20          | Put  | 10      | X |
+| 100             | 0.20          | Call | 10      | 0.4766 |
+**Analysis**
+`Strike Price (K)`: Implied volatility often exhibits a "smile" or "skew" pattern, where options with strike prices far from the current spot price (deep in-the-money or out-of-the-money) tend to have higher implied volatilities.
 
+`Option Premium`: Higher observed premiums generally lead to higher implied volatilities, as the model adjusts to match the market price.
+
+`Time to Maturity (T)`: Implied volatility can vary with time to maturity, often showing higher values for shorter-term options due to increased sensitivity to market movements.
+
+`Repo Rate (q)` and `Risk-Free Rate (r)`: Changes in these rates indirectly affect implied volatility by altering the theoretical option price, which the model uses to match the observed premium.
 
 
 ### **Asian Option**
-**Geometric Asian Option**
+**Geometric Asian Option (closed-form formula)**
 | σ (volatility) | K (strike price)| n (# observations) | Type | Price |
 |----------------|-----------------|--------------------|------|-------|
-| 0.3            | 100             | 50                 | Put  |  |
-| 0.3            | 100             | 100                | Put  |  |
-| 0.4            | 100             | 50                 | Put  |  |
-| 0.3            | 100             | 50                 | Call |  |
-| 0.3            | 100             | 100                | Call |  |
-| 0.4            | 100             | 50                 | Call |  |
+| 0.3            | 100             | 50                 | Put  | 8.4827 |
+| 0.3            | 100             | 100                | Put  | 8.4311 |
+| 0.4            | 100             | 50                 | Put  | 12.5588 |
+| 0.3            | 100             | 50                 | Call | 13.2591 |
+| 0.3            | 100             | 100                | Call | 13.1388 |
+| 0.4            | 100             | 50                 | Call | 15.7598 |
 
-**Arithmetic Asian Option**
+**Arithmetic Asian Option (with MC method with control variate)**
 | σ (volatility) | K (strike price)| n (# observations) | Type | Use_CV | # Paths| Price | CI |
 |----------------|-----------------|--------------------|------|--------|--------|-------|----|
-| 0.3            | 100             | 50                 | Put  | False  | 100000 |  |   |
-| 0.3            | 100             | 50                 | Put  | True   | 100000 |  |   |
-| 0.3            | 100             | 100                | Put  | False  | 100000 |  |   |
-| 0.3            | 100             | 100                | Put  | True   | 100000 |  |   |
-| 0.4            | 100             | 50                 | Put  | False  | 100000 |  |   |
-| 0.4            | 100             | 50                 | Put  | True   | 100000 |  |   |
-| 0.3            | 100             | 50                 | Call | False  | 100000 |  |   |
-| 0.3            | 100             | 50                 | Call | True   | 100000 |  |   |
-| 0.3            | 100             | 100                | Call | False  | 100000 |  |   |
-| 0.3            | 100             | 100                | Call | True   | 100000 |  |   |
-| 0.4            | 100             | 50                 | Call | False  | 100000 |  |   |
-| 0.4            | 100             | 50                 | Call | True   | 100000 |  |   |
+| 0.3            | 100             | 50                 | Put  | False  | 100000 | 7.7910 | (7.722078287068324, 7.859964997614279)  |
+| 0.3            | 100             | 50                 | Put  | True   | 100000 | 7.8023 | (7.797849911560479, 7.8067432517246464)  |
+| 0.3            | 100             | 100                | Put  | False  | 100000 | 7.7626 | (7.693792516239495, 7.831478742218251)  |
+| 0.3            | 100             | 100                | Put  | True   | 100000 | 7.7545 | (7.7501155527589125, 7.7587987868185175)  |
+| 0.4            | 100             | 50                 | Put  | False  | 100000 | 11.2777 | (11.187985634651469, 11.367440381224927)  |
+| 0.4            | 100             | 50                 | Put  | True   | 100000 | 11.2854 | (11.277607015719083, 11.293212640382963)  |
+| 0.3            | 100             | 50                 | Call | False  | 100000 | 14.6913 | (14.547971128378347, 14.834592305826526)  |
+| 0.3            | 100             | 50                 | Call | True   | 100000 | 14.7328 | (14.72207928162502, 14.743591157848412)  |
+| 0.3            | 100             | 100                | Call | False  | 100000 | 14.6231 | (14.481474878060652, 14.764627047724414)  |
+| 0.3            | 100             | 100                | Call | True   | 100000 | 14.6089 | (14.598244584709803, 14.619542606038408)  |
+| 0.4            | 100             | 50                 | Call | False  | 100000 | 18.1572 | (17.956540777657548, 18.357873729230892)  |
+| 0.4            | 100             | 50                 | Call | True   | 100000 | 18.2142 | (18.193897295219447, 18.234411652013694)  |
 
+### **Basket Option**
+**Geometric Basket Option (closed-form formula)**
+| S1   | S2   | σ1   | σ2   | K    | ρ(correlation) | Type | Price   |
+| ---- | ---- | ---- | ---- | ---- | -------------- | ---- | ------- |
+| 100  | 100  | 0.3  | 0.3  | 100  | 0.5            | Put  | 11.4916 |
+| 100  | 100  | 0.3  | 0.3  | 100  | 0.9            | Put  | 12.6224 |
+| 100  | 100  | 0.1  | 0.3  | 100  | 0.5            | Put  | 6.5864  |
+| 100  | 100  | 0.3  | 0.3  | 80   | 0.5            | Put  | 4.7116  |
+| 100  | 100  | 0.3  | 0.3  | 120  | 0.5            | Put  | 21.2891 |
+| 100  | 100  | 0.5  | 0.5  | 100  | 0.5            | Put  | 23.4691 |
+| 100  | 100  | 0.3  | 0.3  | 100  | 0.5            | Call | 22.1021 |
+| 100  | 100  | 0.3  | 0.3  | 100  | 0.9            | Call | 25.8788 |
+| 100  | 100  | 0.1  | 0.3  | 100  | 0.5            | Call | 17.9247 |
+| 100  | 100  | 0.3  | 0.3  | 80   | 0.5            | Call | 32.5363 |
+| 100  | 100  | 0.3  | 0.3  | 120  | 0.5            | Call | 14.6855 |
+| 100  | 100  | 0.5  | 0.5  | 100  | 0.5            | Call | 28.4494 |
+
+**Arithmetic Basket Option (Monte Carlo simulation with/without control variate)**
+| S1 | S2 | σ1 | σ2 | K | ρ(correlation) | Type | Use_CV | # Paths| Price | CI |
+|----|----|----|----|---|----------------|------|--------|--------|-------|----|
+|100 |100 |0.3 |0.3 |100| 0.5            | Put  | False  | 100000 |  10.4947     | (10.400587253254375, 10.58891027105442)   |
+|100 |100 |0.3 |0.3 |100| 0.5            | Put  | True   | 100000 |  10.5778     | (10.565708926266245, 10.589920463327639)   |
+|100 |100 |0.3 |0.3 |100| 0.9            | Put  | False  | 100000 |  12.3403     | (12.235396799206924, 12.44526458138919)   |
+|100 |100 |0.3 |0.3 |100| 0.9            | Put  | True   | 100000 |  12.4273     | (12.424579436314026, 12.43005646081458)   |
+|100 |100 |0.1 |0.3 |100| 0.5            | Put  | False  | 100000 |  5.4840     |  (5.426963969348094, 5.540936349189497)  |
+|100 |100 |0.1 |0.3 |100| 0.5            | Put  | True   | 100000 |  5.5218     |  (5.513275437068496, 5.530254635575429)  |
+|100 |100 |0.3 |0.3 |80 | 0.5            | Put  | False  | 100000 |  4.2185     |  (4.163473175181289, 4.273509275891397)  |
+|100 |100 |0.3 |0.3 |80 | 0.5            | Put  | True   | 100000 |  4.2498     |  (4.242131184170442, 4.257538026355852)  |
+|100 |100 |0.3 |0.3 |120| 0.5            | Put  | False  | 100000 |  19.7546     | (19.621174565629453, 19.88804658649657)   |
+|100 |100 |0.3 |0.3 |120| 0.5            | Put  | True   | 100000 |  19.8794     | (19.863121946768093, 19.895739867820826)   |
+|100 |100 |0.5 |0.5 |100| 0.5            | Put  | False  | 100000 |  20.9408     | (20.79479633274701, 21.086882338303507)   |
+|100 |100 |0.5 |0.5 |100| 0.5            | Put  | True   | 100000 |  21.0787     | (21.050526809250954, 21.106827227374183)   |
+|100 |100 |0.3 |0.3 |100| 0.5            | Call | False  | 100000 |  24.5399     | (24.298262378433883, 24.781493598896297)   |
+|100 |100 |0.3 |0.3 |100| 0.5            | Call | True   | 100000 |  24.4989     | (24.467841044184553, 24.529861991034622)   |
+|100 |100 |0.3 |0.3 |100| 0.9            | Call | False  | 100000 |  26.3310     | (26.055477767340346, 26.606513782017462)   |
+|100 |100 |0.3 |0.3 |100| 0.9            | Call | True   | 100000 |  26.3546     | (26.348236277024604, 26.360913745824455)   |
+|100 |100 |0.1 |0.3 |100| 0.5            | Call | False  | 100000 |  19.5388     | (19.365515649235302, 19.7120119465996)   |
+|100 |100 |0.1 |0.3 |100| 0.5            | Call | True   | 100000 |  19.4450     | (19.42586074736659, 19.464182209297366)   |
+|100 |100 |0.3 |0.3 |80 | 0.5            | Call | False  | 100000 |  35.4778     | (35.20851058547995, 35.74704937561642)   |
+|100 |100 |0.3 |0.3 |80 | 0.5            | Call | True   | 100000 |  35.3814     | (35.3493343854587, 35.41341795150587)   |
+|100 |100 |0.3 |0.3 |120| 0.5            | Call | False  | 100000 |  16.5856     | (16.37569171631144, 16.795468831833663)   |
+|100 |100 |0.3 |0.3 |120| 0.5            | Call | True   | 100000 |  16.5885     | (16.55922127974048, 16.617835476973926)   |
+|100 |100 |0.5 |0.5 |100| 0.5            | Call | False  | 100000 |  34.9923     | (34.520485466349086, 35.46420839737982)   |
+|100 |100 |0.5 |0.5 |100| 0.5            | Call | True   | 100000 |  34.9886     | (34.88320310212911, 35.09394896352364)   |
+|100 |100 |0.3 |0.3 |100| 0.5            | Put  | False  | 1000000|  24.5295     | (24.453128632570863, 24.605970896525665)   |
+|100 |100 |0.3 |0.3 |100| 0.5            | Put  | True   | 1000000|  24.4954     | (24.48556162703866, 24.50523515961164)   |
+
+### **KIKO Option**
+| σ    | T    | L(Lower Bound) | U(Upper Bound) | N (# Observations) | R (rebate) | Price  | Delta   | CI             |
+| ---- | ---- | -------------- | -------------- | ------------------ | ---------- | ------ | ------- | -------------- |
+| 0.20 | 2.0  | 80             | 125            | 24                 | 1.5        | 6.0092 | -0.0931 | 5.9454, 6.0731 |
+| 0.20 | 2.0  | 80             | 125            | 48                 | 1.5        | 6.0990 | -0.1793 | 6.0353, 6.1628 |
+| 0.20 | 2.0  | 80             | 125            | 24                 | 2.0        | 6.2190 | -0.0677 | 6.1557, 6.2823 |
+
+### **American Option**
+| 
 
 ## Extensions
 
 **Basket Option with more than 2 assets**
 For Basket Option, Geometric version can handle more than 2 assets, but Arithmetic version can only handle 2 assets here. 
+| S1 | S2 | S3 | σ1 | σ2 | σ3 | K | ρ(correlation) | Type | Price |
+|----|----|----|----|----|----|---|----------------|------|-------|
+|100 |100 |100 |0.3 |0.3 |0.3 |100| 0.5            | Put  | 12.3920 |
+|100 |100 |100 |0.3 |0.3 |0.3 |100| 0.9            | Put  | 16.2390 |
+|100 |100 |100 |0.1 |0.3 |0.3 |100| 0.5            | Put  | 8.3141 |
+|100 |100 |100 |0.3 |0.3 |0.3 |80 | 0.5            | Put  | 5.0169 |
+|100 |100 |100 |0.3 |0.3 |0.3 |120| 0.5            | Put  | 22.9624 |
+|100 |100 |100 |0.5 |0.5 |0.5 |100| 0.5            | Put  | 26.9640 |
+|....|....|....|....|....|....|...|...|...|...|
+
+## Appendix (Screenshots)
+**HomePage**
+![alt text](screenshots/image.png)
+**European Option**
+![alt text](screenshots/image%20copy.png)
+**Implied Volatility**
+![alt text](screenshots/Screenshot%202025-04-13%20at%2020.18.39.png)
+**Geometric Asian Option**
+![alt text](screenshots/Screenshot%202025-04-13%20at%2020.18.52.png)
+**Arithmetic Asian Option**
+![alt text](screenshots/Screenshot%202025-04-13%20at%2020.19.05.png)
+**Geometric Basket Option**
+![alt text](screenshots/Screenshot%202025-04-13%20at%2020.33.39.png)
+**Arithmetic Basket Option**
+![alt text](screenshots/Screenshot%202025-04-13%20at%2020.19.24.png)
+**KIKO Option**
+![alt text](screenshots/Screenshot%202025-04-13%20at%2020.19.37.png)
+**American Option with Binomial Tree**
+![alt text](screenshots/Screenshot%202025-04-13%20at%2020.19.52.png)
+
