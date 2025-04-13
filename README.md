@@ -14,7 +14,7 @@ CHEN Zhan (3036411217)
 
 ### CHEN Zhan
 
-- implementation of GUI interface
+- Implementation of GUI interface
 
 
 ## Interface Description
@@ -97,6 +97,33 @@ The diagram above illustrates the class hierarchy within the `options` module.
 
 ## Test Results & Analysis
 Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price) = 100. Below are some test results for different options.
+
+### **European Option**
+| σ (volatility) | K (strike price)| q (repo rate) | Type | Price |
+|----------------|-----------------|----------------|------|-------|
+| 0.3            | 100             | 0.20           | Put  |  |
+| 0.3            | 110             | 0.20           | Put  |  |
+| 0.4            | 100             | 0.20           | Put  |  |
+| 0.3            | 100             | 0.10           | Put  |  |
+| 0.3            | 100             | 0.20           | Call |  |
+| 0.3            | 110             | 0.20           | Call |  |
+| 0.4            | 100             | 0.20           | Call |  |
+| 0.3            | 100             | 0.10           | Call |  |
+
+**Implied Volatility**
+| K (strike price)| q (repo rate) | Type | Premium | IV |
+|-----------------|---------------|------|---------|----|
+| 100             | 0.20          | Put  | 5       |  |
+| 100             | 0.20          | Call | 5       |  |
+| 110             | 0.20          | Put  | 5       |  |
+| 110             | 0.20          | Call | 5       |  |
+| 100             | 0.10          | Put  | 5       |  |
+| 100             | 0.10          | Call | 5       |  |
+| 100             | 0.20          | Put  | 10      |  |
+| 100             | 0.20          | Call | 10      |  |
+
+
+
 ### **Asian Option**
 **Geometric Asian Option**
 | σ (volatility) | K (strike price)| n (# observations) | Type | Price |
@@ -104,14 +131,25 @@ Assuming `r`(risk free interest rate) = 0.05, `T`(maturity) = 3, `S0`(spot price
 | 0.3            | 100             | 50                 | Put  |  |
 | 0.3            | 100             | 100                | Put  |  |
 | 0.4            | 100             | 50                 | Put  |  |
-| 0.3            | 100             | 50                | Call |  |
+| 0.3            | 100             | 50                 | Call |  |
 | 0.3            | 100             | 100                | Call |  |
 | 0.4            | 100             | 50                 | Call |  |
 
 **Arithmetic Asian Option**
-| σ (volatility) | K (strike price)| n (# observations) | Type | Use_CV | # Paths| Price |
-|----------------|-----------------|--------------------|------|--------|--------|-------|
-| 
+| σ (volatility) | K (strike price)| n (# observations) | Type | Use_CV | # Paths| Price | CI |
+|----------------|-----------------|--------------------|------|--------|--------|-------|----|
+| 0.3            | 100             | 50                 | Put  | False  | 100000 |  |   |
+| 0.3            | 100             | 50                 | Put  | True   | 100000 |  |   |
+| 0.3            | 100             | 100                | Put  | False  | 100000 |  |   |
+| 0.3            | 100             | 100                | Put  | True   | 100000 |  |   |
+| 0.4            | 100             | 50                 | Put  | False  | 100000 |  |   |
+| 0.4            | 100             | 50                 | Put  | True   | 100000 |  |   |
+| 0.3            | 100             | 50                 | Call | False  | 100000 |  |   |
+| 0.3            | 100             | 50                 | Call | True   | 100000 |  |   |
+| 0.3            | 100             | 100                | Call | False  | 100000 |  |   |
+| 0.3            | 100             | 100                | Call | True   | 100000 |  |   |
+| 0.4            | 100             | 50                 | Call | False  | 100000 |  |   |
+| 0.4            | 100             | 50                 | Call | True   | 100000 |  |   |
 
 
 ## Extensions
