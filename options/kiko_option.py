@@ -1,4 +1,4 @@
-from option import Option
+from options.option import Option
 import numpy as np
 import math
 from scipy.stats import norm, qmc
@@ -107,11 +107,10 @@ if __name__ == "__main__":
     lower_barrier=80,
     upper_barrier=125,
     num_observations=24,
-    rebate=1.5
-)
+    rebate=1.5)
 
-price, low, high = option.price()
-delta = option.calculate_delta()
+    price, low, high = option.price()
+    delta = option.calculate_delta()
 
-print(f"KIKO Option Price: {price:.4f}, 95% CI: [{low:.4f}, {high:.4f}]")
-print(f"Delta: {delta:.4f}")
+    print(f"KIKO Option Price: {price:.4f}, 95% CI: [{low:.4f}, {high:.4f}]")
+    print(f"Delta: {delta:.4f}")

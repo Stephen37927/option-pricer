@@ -1,4 +1,4 @@
-from option import Option
+from options.option import Option
 import numpy as np
 from scipy.stats import norm
 
@@ -178,7 +178,7 @@ if __name__ == "__main__":
     geometric_option = GeometricBasketOption(spot_prices, risk_free_rate, maturity, strike_price, volatilities, correlation, option_type)
     print("Geometric Basket Option Price:", geometric_option.price())
 
-    arithmetic_option = ArithmeticBasketOption(spot_prices, risk_free_rate, maturity, strike_price, volatilities, correlation, num_paths=10000)
+    arithmetic_option = ArithmeticBasketOption(spot_prices, risk_free_rate, maturity, strike_price, volatilities, correlation, option_type, num_paths=10000)
     price, conf_interval = arithmetic_option.price()
     print("Arithmetic Basket Option Price:", price)
     print("95% Confidence Interval:", conf_interval)

@@ -123,9 +123,7 @@ if __name__ == "__main__":
     r = 0.03     # Risk-free rate
     q = 0.01     # Repo rate
     option_premium = 0.4841  # Observed market option price
-
-    try:
-        iv = iv_calculator.calculate('call', S0, r, q, T, K, option_premium)
-        print(f"Implied Volatility: {iv}")
-    except ValueError as e:
-        print(e)
+   
+    iv = iv_calculator.calculate('call', S0, r, q, T, K, option_premium)
+    print(f"Implied Volatility: {iv}")
+    
